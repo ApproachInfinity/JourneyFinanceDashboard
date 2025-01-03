@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Dashboard App</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <!-- jQuery UI -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css" rel="stylesheet">
+    <!-- Shepherd CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shepherd.js/11.1.1/css/shepherd.css">
+    <!-- Pickr Color Picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/nano.min.css">
+    <!-- Styles -->
+    <link href="styles/styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Financial Dashboard
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <!-- Collapsible Menu -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#overview" data-bs-toggle="tab">
+                                <i class="fas fa-home me-1"></i>Overview
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#budget" data-bs-toggle="tab">
+                                <i class="fas fa-wallet me-1"></i>Budget
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#savings" data-bs-toggle="tab">
+                                <i class="fas fa-piggy-bank me-1"></i>Savings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#investments" data-bs-toggle="tab">
+                                <i class="fas fa-chart-bar me-1"></i>Investments
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#retirement" data-bs-toggle="tab">
+                                <i class="fas fa-umbrella-beach me-1"></i>Retirement
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="d-flex align-items-start flex-column flex-md-row">
+                        <div class="w-md-auto mb-2 mb-md-0">
+                            <button class="btn btn-primary w-100" id="guidedSetup">
+                                Guided Setup
+                            </button>
+                        </div>
+                        <div class="quick-actions btn-group w-md-auto ms-md-2">
+                            <button class="btn btn-light" title="Help">
+                                <i class="fas fa-question-circle"></i>
+                            </button>
+                            <button class="btn btn-light" id="darkModeToggle" title="Toggle Dark Mode">
+                                <i class="fas fa-moon"></i>
+                            </button>
+                            <button class="btn btn-light" id="resetDataButton" title="Reset Dashboard Data">
+                                <i class="fas fa-magic"></i>
+                            </button>
+                            <input type="file" id="dataFileInput" style="display: none;">
+                            <button class="btn btn-light" id="uploadDataBtn" title="Upload Dashboard Data">
+                                <i class="fas fa-upload"></i>
+                            </button>
+                            <button class="btn btn-light" id="saveDataBtn" title="Save Dashboard Data">
+                                <i class="fas fa-save"></i>
+                            </button>
+                            <button class="btn btn-light" title="Settings">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <button class="btn btn-light" title="Profile">
+                                <i class="fas fa-user-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-3 col-xxl-2 sidebar p-3">
+                <!-- Collapse toggle -->
+                <div class="mb-2">
+                    <button class="btn btn-secondary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#controlsCollapse" id="financialItemsToggler">
+                        My Financial Items<i class="fas fa-chevron-down ms-2"></i>
+                    </button>
+                </div>
+                
+                <!-- Collapsible controls -->
+                <div class="collapse" id="controlsCollapse">
+                    <!-- Financial Items Section -->
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">My Financial Items</h5>
+                            <button class="btn btn-sm btn-primary" id="addItemBtn" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                        </div>
+                        <!-- Items list -->
+                        <div id="financialItemsList">
+                            <!-- Items will be added here dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Item Modal -->
+            <div class="modal fade" id="addItemModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add Financial Item</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addItemForm">
+                                <div class="mb-3">
+                                    <label class="form-label" for="itemName">Item Name</label>
+                                    <input type="text" class="form-control" id="itemName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="itemType">Type</label>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="itemType" data-bs-toggle="dropdown">
+                                            Select type...
+                                        </button>
+                                        <ul class="dropdown-menu w-100">
+                                            <li><button class="dropdown-item" type="button" data-value="account">Bank Account</button></li>
+                                            <li><button class="dropdown-item" type="button" data-value="credit">Credit Card</button></li>
+                                            <li><button class="dropdown-item" type="button" data-value="investment">Investment</button></li>
+                                            <li><button class="dropdown-item" type="button" data-value="loan">Loan</button></li>
+                                            <li><button class="dropdown-item" type="button" data-value="asset">Asset</button></li>
+                                        </ul>
+                                    </div>
+                                    <input type="hidden" id="itemTypeValue" required>
+                                </div>
+                                <div id="typeSpecificFields" class="mt-3" style="display: none;">
+                                    <!-- Bank Account Fields -->
+                                    <div class="type-field" data-type="account">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="initialBalance">Initial Balance</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">$</span>
+                                                <input type="number" class="form-control" id="initialBalance" step="0.01" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="accountStartDate">Start Date</label>
+                                            <input type="date" class="form-control" id="accountStartDate" max="9999-12-31" required>
+                                        </div>
+                                    </div>
+                                
+                                    <!-- Credit Card Fields -->
+                                    <div class="type-field" data-type="credit">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="creditLimit">Credit Limit</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">$</span>
+                                                <input type="number" class="form-control" id="creditLimit" step="0.01" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="creditInitialBalance">Initial Balance</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">$</span>
+                                                <input type="number" class="form-control" id="creditInitialBalance" step="0.01" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="creditStartDate">Start Date</label>
+                                            <input type="date" class="form-control" id="creditStartDate" max="9999-12-31" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="creditInterestRate">Interest Rate (%)</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="creditInterestRate" step="0.01" required>
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                
+                                    <!-- Investment Fields -->
+                                    <div class="type-field" data-type="investment">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="initialInvestment">Initial Investment</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">$</span>
+                                                <input type="number" class="form-control" id="initialInvestment" step="0.01" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="investmentStartDate">Start Date</label>
+                                            <input type="date" class="form-control" id="investmentStartDate" max="9999-12-31" required>
+                                        </div>
+                                    </div>
+                                
+                                    <!-- Loan Fields -->
+                                    <div class="type-field" data-type="loan">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="loanAmount">Initial Loan Amount</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">$</span>
+                                                <input type="number" class="form-control" id="loanAmount" step="0.01" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="loanStartDate">Start Date</label>
+                                            <input type="date" class="form-control" id="loanStartDate" max="9999-12-31" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="loanInterestRate">Interest Rate (%)</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="loanInterestRate" step="0.01" required>
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="loanPaymentAmount">Payment Amount (Optional)</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">$</span>
+                                                <input type="number" class="form-control" id="loanPaymentAmount" step="0.01" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="loanPaymentFrequency">Payment Frequency (Optional)</label>
+                                            <select class="form-select" id="loanPaymentFrequency">
+                                                <option value="">Select frequency...</option>
+                                                <option value="weekly">Weekly</option>
+                                                <option value="biweekly">Bi-weekly</option>
+                                                <option value="semimonthly">Semi-monthly</option>
+                                                <option value="monthly">Monthly</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                
+                                    <!-- Asset Fields -->
+                                    <div class="type-field" data-type="asset">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="assetPurchasePrice">Purchase Price</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">$</span>
+                                                <input type="number" class="form-control" id="assetPurchasePrice" step="0.01" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="assetPurchaseDate">Purchase Date</label>
+                                            <input type="date" class="form-control" id="assetPurchaseDate" max="9999-12-31" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="assetLoan">Associated Loan (Optional)</label>
+                                            <select class="form-select" id="assetLoan">
+                                                <option value="">No Associated Loan</option>
+                                                <!-- Will be populated with available loans -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="itemColor">Display Color</label>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="itemColor" data-bs-toggle="dropdown">
+                                            Select color...
+                                        </button>
+                                        <ul class="dropdown-menu w-100">
+                                            <li><button class="dropdown-item" type="button" data-value="#1f77b4">Blue</button></li>
+                                            <li><button class="dropdown-item" type="button" data-value="#2ca02c">Green</button></li>
+                                            <li><button class="dropdown-item" type="button" data-value="#d62728">Red</button></li>
+                                            <li><button class="dropdown-item" type="button" data-value="#9467bd">Purple</button></li>
+                                            <li><button class="dropdown-item" type="button" data-value="#ff7f0e">Orange</button></li>
+                                            <li><button class="dropdown-item" type="button" data-value="#8c564b">Brown</button></li>
+                                            <!--
+                                            <li><button class="dropdown-item custom-color-picker" type="button">
+                                                <i class="fas fa-eye-dropper me-2"></i>Custom Color...
+                                            </button></li>
+                                            -->
+                                        </ul>
+                                    </div>
+                                    <input type="hidden" id="itemColorValue" required>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="saveItemBtn">Add Item</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Item Modal -->
+            <div class="modal fade" id="editItemModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Financial Item</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editItemForm">
+                                <input type="hidden" id="editItemId">
+                                <div class="mb-3">
+                                    <label class="form-label">Item Name</label>
+                                    <input type="text" class="form-control" id="editItemName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Display Color</label>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="editItemColor" data-bs-toggle="dropdown">
+                                            Select color...
+                                        </button>
+                                        <ul class="dropdown-menu w-100">
+                                            <li><button class="dropdown-item" type="button" data-value="#1f77b4">Blue</button></li>
+                                            <li><button class="dropdown-item" type="button" data-value="#2ca02c">Green</button></li>
+                                            <li><button class="dropdown-item" type="button" data-value="#d62728">Red</button></li>
+                                            <li><button class="dropdown-item" type="button" data-value="#9467bd">Purple</button></li>
+                                            <li><button class="dropdown-item" type="button" data-value="#ff7f0e">Orange</button></li>
+                                            <li><button class="dropdown-item" type="button" data-value="#8c564b">Brown</button></li>
+                                            <!--
+                                            <li><button class="dropdown-item custom-color-picker" type="button">
+                                                <i class="fas fa-eye-dropper me-2"></i>Custom Color...
+                                            </button></li>
+                                            -->
+                                        </ul>
+                                    </div>
+                                    <input type="hidden" id="editItemColorValue" required>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="saveEditBtn">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Update Data Modal -->
+            <div class="modal fade" id="updateDataModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Update Data for <span id="updateDataItemName"></span></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs mb-3" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#manualEntry" type="button">
+                                        <i class="fas fa-pencil-alt me-2"></i>Manual Entry
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#csvUpload" type="button">
+                                        <i class="fas fa-file-csv me-2"></i>CSV Upload
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <!-- Tab content -->
+                            <div class="tab-content">
+                                <!-- Manual Entry Tab -->
+                                <div class="tab-pane fade show active" id="manualEntry">
+                                    <form id="manualEntryForm">
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Date</label>
+                                                <input type="date" class="form-control" id="transactionDate" max="9999-12-31" required>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Amount</label>
+                                                <input type="number" class="form-control" id="transactionAmount" step="0.01" required>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Description</label>
+                                                <input type="text" class="form-control" id="transactionDescription" required>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Add Entry</button>
+                                    </form>
+                                </div>
+
+                                <!-- CSV Upload Tab -->
+                                <div class="tab-pane fade" id="csvUpload">
+                                    <div class="mb-3">
+                                        <label class="form-label">Upload CSV File</label>
+                                        <div class="alert alert-info">
+                                            <h6 class="alert-heading mb-2">CSV Format Requirements:</h6>
+                                            <div class="collapse" id="formatRequirements">
+                                                <p class="mb-2">Please prepare your CSV file as follows:</p>
+                                                <ol class="mb-2">
+                                                    <li>Rename your column headers to match exactly:
+                                                        <ul>
+                                                            <li><code>date</code> - Transaction date (YYYY-MM-DD)</li>
+                                                            <li><code>amount</code> - Transaction amount (positive or negative number)</li>
+                                                            <li><code>description</code> - Transaction description</li>
+                                                        </ul>
+                                                    </li>
+                                                    <li>Remove any other columns (account numbers, reference numbers, etc.)</li>
+                                                    <li>Ensure dates are in YYYY-MM-DD format</li>
+                                                    <li>Remove any currency symbols from amounts</li>
+                                                </ol>
+                                                <div class="mt-3">
+                                                    <strong>Example CSV format:</strong><br>
+                                                    <code>date,amount,description</code><br>
+                                                    <code>2024-01-15,-50.00,Grocery shopping</code><br>
+                                                    <code>2024-01-16,1200.00,Salary deposit</code>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn btn-primary" id="formatRequirementsToggler"
+                                                data-toggle="collapse" data-target="#formatRequirements">Show Details</button>
+                                        </div>
+                                        <input type="file" class="form-control" id="csvFile" accept=".csv">
+                                    </div>
+                                    <div id="csvPreview" class="mb-3">
+                                        <h6>Preview</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Amount</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="csvPreviewBody">
+                                                    <tr>
+                                                        <td colspan="3" class="text-muted">Upload a CSV file to preview data</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" id="importCsvBtn" disabled>
+                                        Import Data
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Existing Entries Section -->
+                            <div class="mt-4">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="mb-0">Existing Entries</h6>
+                                    <div class="d-flex align-items-center">
+                                        <select class="form-select form-select-sm me-2" id="entriesPerPage" style="width: auto;">
+                                            <option value="10">10 entries</option>
+                                            <option value="25">25 entries</option>
+                                            <option value="50">50 entries</option>
+                                            <option value="100">100 entries</option>
+                                        </select>
+                                        <button type="button" class="btn btn-danger btn-sm" id="clearEntriesBtn">
+                                            Clear All Entries
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Amount</th>
+                                                <th>Description</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="existingEntriesBody"></tbody>
+                                    </table>
+                                </div>
+                                
+                                <!-- Pagination -->
+                                <nav aria-label="Entry navigation" class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted" id="entryCount">
+                                        Showing <span id="startEntry">0</span> to <span id="endEntry">0</span> of <span id="totalEntries">0</span> entries
+                                    </small>
+                                    <ul class="pagination pagination-sm mb-0">
+                                        <li class="page-item disabled">
+                                            <button class="page-link" id="prevPage">Previous</button>
+                                        </li>
+                                        <li class="page-item disabled">
+                                            <button class="page-link" id="nextPage">Next</button>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-9 col-xxl-10 main-content p-4">
+                <div class="tab-content">
+                    <!-- Overview Tab -->
+                    <div class="tab-pane fade show active" id="overview">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="chart-area">
+                                    <!-- Chart Overview -->
+                                    <div id="chartView" class="view-content active">
+                                        <div id="chartHeader">
+                                            <div id="chartTitle">
+                                                <h5 class="card-title">Financial Overview</h5>
+                                                <button class="btn btn-sm btn-primary" id="addChartItemBtn" data-bs-toggle="modal" data-bs-target="#addActionModal">
+                                                    <i class="fas fa-plus me-1"></i>Add Item
+                                                </button>
+                                            </div>
+                                            <div class="zoom-controls">
+                                                <button class="zoom-button" id="zoomIn" title="Zoom In">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                                <button class="zoom-button" id="zoomOut" title="Zoom Out">
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
+                                                <button class="zoom-button" id="zoomReset" title="Reset Zoom">
+                                                    <i class="fas fa-undo"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div id="chartLegendContainer" class="mb-3"></div>
+                                        <div id="chartContainer">
+                                            <canvas id="financialChart"></canvas>
+                                        </div>
+                                    </div>
+                                    <!-- Summary Overview -->
+                                    <div id="summaryView" class="view-content">
+                                        <div class="summary-header d-flex justify-content-between align-items-center mb-3">
+                                            <h5 class="mb-0">My Financial Summary</h5>
+                                            <div class="dropdown">
+                                                <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                                    id="addMetricDropdown" data-bs-toggle="dropdown">
+                                                    Add Metric
+                                                </button>
+                                                <ul class="dropdown-menu" id="metricDropdown">
+                                                    <li><a class="dropdown-item" href="#" data-metric="income">Monthly Income</a></li>
+                                                    <li><a class="dropdown-item" href="#" data-metric="expenses">Monthly Expenses</a></li>
+                                                    <li><a class="dropdown-item" href="#" data-metric="networth">Net Worth</a></li>
+                                                    <li><a class="dropdown-item" href="#" data-metric="debt">Total Debt</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="row" id="metricCards">
+                                            <!-- Cards will be populated by JavaScript -->
+                                        </div>
+                                        <small class="text-muted">Note: Percentage change is based on the current metric value vs the previous month's average.</small>
+                                    </div>
+                                    <!-- Goals Overview -->
+                                    <div id="goalsView" class="view-content">
+                                        <div class="goals-header d-flex justify-content-between align-items-center mb-3">
+                                            <h5 class="mb-0">My Financial Goals</h5>
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addGoalModal">
+                                                <i class="fas fa-plus me-2"></i>Add Goal
+                                            </button>
+                                        </div>
+                                        <div class="row" id="goalCards">
+                                            <!-- Goals will be populated here -->
+                                        </div>
+                                    </div>
+                                    <!-- Goal Modals -->
+                                    <div class="modal fade" id="addGoalModal" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Add Financial Goal</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form id="addGoalForm">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Goal Type</label>
+                                                            <select class="form-select" id="goalType" required>
+                                                                <option value="">Select a goal type...</option>
+                                                                <option value="budgeting">Budgeting</option>
+                                                                <option value="saving">Saving</option>
+                                                                <option value="investing">Investing</option>
+                                                                <option value="retirement">Retirement</option>
+                                                                <option value="debt">Debt Repayment</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <!-- Budgeting Goal -->
+                                                        <div id="budgetingOptions" style="display: none;">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Budgeting Goal</label>
+                                                                <select class="form-select" id="budgetGoalType" name="budgetGoalType">
+                                                                    <option value="">Select budgeting goal...</option>
+                                                                    <option value="decrease_monthly">Decrease Monthly Expenses</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div id="budgetingDetails" style="display: none;">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Target Monthly Expenses</label>
+                                                                <div class="input-group">
+                                                                    <span class="input-group-text">$</span>
+                                                                    <input type="number" class="form-control" id="budgetTargetAmount" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Link Financial Items</label>
+                                                                <div class="linked-items-container border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                                                                    <!-- Will be populated with checkboxes -->
+                                                                </div>
+                                                                <div class="form-text">Select accounts to track expenses</div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Saving Goal -->
+                                                        <div id="savingOptions" style="display: none;">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Saving Goal</label>
+                                                                <select class="form-select" id="savingGoalType" name="savingGoalType">
+                                                                    <option value="">Saving for...</option>
+                                                                    <option value="emergency_fund">Emergency Fund</option>
+                                                                    <option value="vehicle">Vehicle</option>
+                                                                    <option value="home">Home</option>
+                                                                    <option value="other">Other</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div id="savingDetails" style="display: none;">
+                                                            <div id="otherSavingDescription" class="mb-3" style="display: none;">
+                                                                <label class="form-label">Goal Description</label>
+                                                                <input type="text" class="form-control" 
+                                                                    id="otherGoalDescription" 
+                                                                    name="otherGoalDescription"
+                                                                    maxlength="20" 
+                                                                    placeholder="Enter short description"
+                                                                    required>
+                                                                <div class="form-text">Maximum 20 characters</div>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Target Amount</label>
+                                                                <div class="input-group">
+                                                                    <span class="input-group-text">$</span>
+                                                                    <input type="number" class="form-control" 
+                                                                        id="savingTargetAmount" 
+                                                                        name="savingTargetAmount"
+                                                                        required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Target Date</label>
+                                                                <input type="date" class="form-control" 
+                                                                    id="savingTargetDate" 
+                                                                    name="savingTargetDate"
+                                                                    max="9999-12-31"
+                                                                    required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Link Financial Items</label>
+                                                                <div class="linked-items-container border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                                                                    <!-- Will be populated with checkboxes -->
+                                                                </div>
+                                                                <div class="form-text">Select accounts to track savings progress</div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Investing Goal Placeholder -->
+                                                        <div id="investingOptions" style="display: none;">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Investing Goal</label>
+                                                                <select class="form-select" id="investingGoalType" name="investingGoalType">
+                                                                    <option value="">Select investing goal...</option>
+                                                                    <option value="target_amount">Target Investment Value</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div id="investingDetails" style="display: none;">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Target Investment Value</label>
+                                                                <div class="input-group">
+                                                                    <span class="input-group-text">$</span>
+                                                                    <input type="number" class="form-control" id="investingTargetAmount" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Target Date</label>
+                                                                <input type="date" class="form-control" 
+                                                                    id="investingTargetDate" 
+                                                                    name="investingTargetDate" 
+                                                                    max="9999-12-31"
+                                                                    required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Link Financial Items</label>
+                                                                <div class="linked-items-container border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                                                                    <!-- Will be populated with checkboxes -->
+                                                                </div>
+                                                                <div class="form-text">Select investments to track</div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Retirement Goal Placeholder -->
+                                                        <div id="retirementOptions" style="display: none;">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Investing Goal</label>
+                                                                <select class="form-select" id="retirementGoalType" name="retirementGoalType">
+                                                                    <option value="">Select retirement goal...</option>
+                                                                    <option value="target_amount">Target Retirement Fund Value</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div id="retirementDetails" style="display: none;">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Target Retirement Fund Value</label>
+                                                                <div class="input-group">
+                                                                    <span class="input-group-text">$</span>
+                                                                    <input type="number" class="form-control" id="retirementTargetAmount" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Target Date</label>
+                                                                <input type="date" class="form-control" 
+                                                                    id="retirementTargetDate" 
+                                                                    name="retirementTargetDate" 
+                                                                    max="9999-12-31"
+                                                                    required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Link Financial Items</label>
+                                                                <div class="linked-items-container border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                                                                    <!-- Will be populated with checkboxes -->
+                                                                </div>
+                                                                <div class="form-text">Select retirement funds to track</div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Debt Reduction Goal -->
+                                                        <div id="debtOptions" style="display: none;">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Debt Reduction Goal</label>
+                                                                <select class="form-select" id="debtGoalType" name="debtGoalType">
+                                                                    <option value="">Select debt goal...</option>
+                                                                    <option value="payoff_debt">Reduce Debt Item</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div id="debtDetails" style="display: none;">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Target Debt Amount</label>
+                                                                <div class="input-group">
+                                                                    <span class="input-group-text">$</span>
+                                                                    <input type="number" class="form-control" id="debtTargetAmount" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Target Date</label>
+                                                                <input type="date" class="form-control" 
+                                                                    id="debtTargetDate" 
+                                                                    name="debtTargetDate" 
+                                                                    max="9999-12-31"
+                                                                    required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Link Financial Items</label>
+                                                                <div class="linked-items-container border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                                                                    <!-- Will be populated with checkboxes -->
+                                                                </div>
+                                                                <div class="form-text">Select debt item to track</div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="button" class="btn btn-primary" id="saveGoalBtn">Add Goal</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Edit Goal Modal -->
+                                    <div class="modal fade" id="editGoalModal" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Edit Financial Goal</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <!-- Budgeting Goal -->
+                                                    <form id="editGoalForm">
+                                                        <div id="editBudgetingGoal" style="display: none;">
+                                                            <input type="hidden" id="editBudgetingGoalId">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Goal Name</label>
+                                                                <input type="text" class="form-control" id="editBudgetingGoalName" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Target Monthly Expenses</label>
+                                                                <div class="input-group">
+                                                                    <span class="input-group-text">$</span>
+                                                                    <input type="number" class="form-control" id="editBudgetingTargetAmount" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Link Financial Items</label>
+                                                                <div class="linked-items-container border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                                                                    <!-- Will be populated with checkboxes -->
+                                                                </div>
+                                                                <div class="form-text">Select accounts to track expenses</div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Saving Goal -->
+                                                        <div id="editSavingGoal" style="display: none;">
+                                                            <input type="hidden" id="editSavingGoalId">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Goal Name</label>
+                                                                <input type="text" class="form-control" id="editSavingGoalName" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Savings Target</label>
+                                                                <div class="input-group">
+                                                                    <span class="input-group-text">$</span>
+                                                                    <input type="number" class="form-control" id="editSavingTargetAmount"required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Target Date</label>
+                                                                <input type="date" class="form-control" 
+                                                                    id="editSavingTargetDate" 
+                                                                    name="editSavingTargetDate"
+                                                                    max="9999-12-31"
+                                                                    required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Link Financial Items</label>
+                                                                <div class="linked-items-container border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                                                                    <!-- Will be populated with checkboxes -->
+                                                                </div>
+                                                                <div class="form-text">Select accounts to track savings</div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Investing Goal -->
+                                                        <div id="editInvestingGoal" style="display: none;">
+                                                            <input type="hidden" id="editInvestingGoalId">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Goal Name</label>
+                                                                <input type="text" class="form-control" id="editInvestingGoalName" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Investing Goal</label>
+                                                                <div class="input-group">
+                                                                    <span class="input-group-text">$</span>
+                                                                    <input type="number" class="form-control" id="editInvestingTargetAmount" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Target Date</label>
+                                                                <input type="date" class="form-control" 
+                                                                    id="editInvestingTargetDate" 
+                                                                    name="editInvestingTargetDate"
+                                                                    max="9999-12-31"
+                                                                    required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Link Financial Items</label>
+                                                                <div class="linked-items-container border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                                                                    <!-- Will be populated with checkboxes -->
+                                                                </div>
+                                                                <div class="form-text">Select accounts to track investments</div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Retirement Goal -->
+                                                        <div id="editRetirementGoal" style="display: none;">
+                                                            <input type="hidden" id="editRetirementGoalId">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Goal Name</label>
+                                                                <input type="text" class="form-control" id="editRetirementGoalName" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Retirement Goal</label>
+                                                                <div class="input-group">
+                                                                    <span class="input-group-text">$</span>
+                                                                    <input type="number" class="form-control" id="editRetirementTargetAmount" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Target Date</label>
+                                                                <input type="date" class="form-control" 
+                                                                    id="editRetirementTargetDate" 
+                                                                    name="editRetirementTargetDate"
+                                                                    max="9999-12-31"
+                                                                    required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Link Financial Items</label>
+                                                                <div class="linked-items-container border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                                                                    <!-- Will be populated with checkboxes -->
+                                                                </div>
+                                                                <div class="form-text">Select accounts to track retirement savings</div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Debt Reduction Goal -->
+                                                        <div id="editDebtGoal" style="display: none;">
+                                                            <input type="hidden" id="editDebtGoalId">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Goal Name</label>
+                                                                <input type="text" class="form-control" id="editDebtGoalName" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Debt Reduction Goal</label>
+                                                                <div class="input-group">
+                                                                    <span class="input-group-text">$</span>
+                                                                    <input type="number" class="form-control" id="editDebtTargetAmount" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Target Date</label>
+                                                                <input type="date" class="form-control" 
+                                                                    id="editDebtTargetDate" 
+                                                                    name="editDebtTargetDate"
+                                                                    max="9999-12-31"
+                                                                    required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Link Financial Items</label>
+                                                                <div class="linked-items-container border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                                                                    <!-- Will be populated with checkboxes -->
+                                                                </div>
+                                                                <div class="form-text">Select debt items to track</div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="button" class="btn btn-primary" id="saveEditGoalBtn">Save Changes</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Chart interactive modals -->
+
+                                    <!-- Financial Item Overlay -->
+                                    <div class="financial-item-overlay">
+                                        <div class="financial-item-overlay-content">
+                                            <button class="financial-item-overlay-close">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                            <div id="overlayFinancialItemContent"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Goal Overlay -->
+                                    <div class="goal-overlay">
+                                        <div class="goal-overlay-content">
+                                            <button class="goal-overlay-close">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                            <div id="overlayGoalContent"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Add Action Modal -->
+                                    <div class="modal fade" id="addActionModal" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Add New Item</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">What would you like to add?</label>
+                                                        <select class="form-select" id="actionType">
+                                                            <option value="">Select an option...</option>
+                                                            <option value="financial">Financial Item</option>
+                                                            <option value="goal">Financial Goal</option>
+                                                            <option value="milestone">Milestone</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="button" class="btn btn-primary" id="actionContinueBtn" disabled>Continue</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Milestone Modal -->
+                                    <div class="modal fade" id="addMilestoneModal" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Add Milestone</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form id="addMilestoneForm">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Date</label>
+                                                            <input type="date" class="form-control" id="milestoneDate" max="9999-12-31" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Description</label>
+                                                            <input type="text" class="form-control" id="milestoneDescription" 
+                                                                placeholder="E.g., Bought first home" required>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="button" class="btn btn-primary" id="saveMilestoneBtn">Save Milestone</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-6 chart-controls mt-3 p-3 border-top">
+                                        <div class="row justify-content-center">
+                                            <div class="col-sm-6 d-flex flex-column align-items-center">
+                                                <label class="form-label mb-2">View Options</label>
+                                                <div class="btn-group w-100" role="group" aria-label="View type selection">
+                                                    <input type="radio" class="btn-check" name="viewtype" id="viewChart" checked>
+                                                    <label class="btn btn-outline-primary" for="viewChart">
+                                                        <i class="fas fa-chart-line text-primary me-2"></i>Chart
+                                                    </label>
+                                                    <input type="radio" class="btn-check" name="viewtype" id="viewSummary">
+                                                    <label class="btn btn-outline-primary" for="viewSummary">
+                                                        <i class="fas fa-file-alt text-primary me-2"></i>Summary
+                                                    </label>
+                                                    <input type="radio" class="btn-check" name="viewtype" id="viewGoals">
+                                                    <label class="btn btn-outline-primary" for="viewGoals">
+                                                        <i class="fas fa-trophy text-primary me-2"></i>Goals
+                                                    </label>   
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Other tabs -->
+                        <div class="tab-pane fade" id="budget">Budget Content</div>
+                        <div class="tab-pane fade" id="savings">Savings Content</div>
+                        <div class="tab-pane fade" id="investments">Investments Content</div>
+                        <div class="tab-pane fade" id="retirement">Retirement Content</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Initial Guided Setup Modal -->
+    <div class="modal fade" id="initialGuidedSetupModal" tabindex="-1" aria-labelledby="guidedSetupModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title" id="guidedSetupModalLabel">
+                        <i class="fas fa-magic me-2"></i>Welcome to Your Financial Dashboard!
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="feature-icon bg-primary bg-gradient p-2 rounded-circle me-3">
+                            <i class="fas fa-info-circle text-white fa-lg"></i>
+                        </div>
+                        <p class="mb-0">
+                            Would you like to take a guided tour of your dashboard?
+                            We'll show you all the key features and help you get started.
+                            During the tour, we'll load some sample financial data to help you understand how everything works.
+                            <br><span class="text-danger">Warning: This will erase any current unsaved progress.</span>
+                        </p>
+                    </div>
+                    <div class="tour-features mb-4">
+                        <ul>
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span>Learn how to add and manage financial accounts</span>
+                            </li>
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span>Understand different dashboard views</span>
+                            </li>
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span>Set up your financial goals</span>
+                            </li>
+                        </ul>
+                        <div class="form-check user-preference">
+                            <input class="form-check-input" type="checkbox" id="dontShowAgain">
+                            <label class="form-check-label" for="dontShowAgain">
+                                Don't show this message again
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" id="skipTourBtn">
+                        <i class="fas fa-times me-2"></i>Skip Tour
+                    </button>
+                    <button type="button" class="btn btn-primary" id="startTourBtn">
+                        <i class="fas fa-play me-2"></i>Start Tour
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmButton">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- jQuery UI -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+    <!-- Moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <!-- Chart.js Decimation Plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-decimation/4.0.1/decimation.min.js"></script>
+    <!-- Latest Chart.js Date Adapter -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <!-- Hammer.js for touch gestures -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <!-- Chart.js Zoom Plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
+    <!-- Chart.js Annotations Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.2.1/dist/chartjs-plugin-annotation.min.js"></script>
+    <!-- Shepherd.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shepherd.js/11.1.1/js/shepherd.min.js"></script>
+    <!-- Pickr Color Picker -->
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
+    <!-- Papa Parse -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <!-- Custom Scripts -->
+    <script src="scripts/scripts.js"></script>
+</body>
+
+</html>
